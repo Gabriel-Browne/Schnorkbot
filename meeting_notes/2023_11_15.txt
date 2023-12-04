@@ -1,0 +1,37 @@
+Robot Schnorks
+Regular meetings Wednesdays at 4:00 PT, 5:00 MT, 7:00 ET next one 11/29/2023
+Homework:
+Get a github account - need tutorial
+Learn Java Script
+
+11/15/2023
+Could start with Axel’s senior project as a base case
+How do we deal with collisions
+Map could be a grid, but agents can move more freely than no a grid.
+Base Case - Version 1
+We need a world, arena or ring, terrain or world
+Enemies are zergling like
+Game starts out easy few enemies, slower then more enemies faster
+
+Capacities:
+Intellectual capacity
+Physical capacity
+Social capacity (communicating vs cooperating)
+
+Modules
+	Vision & thinking
+	Weapon Module
+	Locomotion Module
+	Communication Module
+
+Development:
+Power-ups
+Stuff in the environment amplifies power (lever/hydraulics)
+1 enemies are slow, but powerful, 1 is fast and multiplies, 
+
+Rock paper scissors - each protagonist has a kryptonite antagonist motivates cooperation
+Build a base or shields
+Breeding/duplication of both protagonists and antagonists
+Protagonists might have expendable parts
+
+Github

@@ -1,0 +1,59 @@
+Hello, world!
+
+Overall:  Write code in VS Code
+    When done Save code, then sync changes made locally to GitHub
+
+GitHub manages team actions, keeps files sync'd...
+
+GitHub terms
+    - commit: save change slocally with a message
+    - push: put saved changes into the cloud (GitHub)
+    - fetch: load new changes from the cloud 
+    - pull: install those changes onto local machine
+    - branch: 
+        A GitHub branch is a parallel version of a
+        repository that allows you to work on different
+        features or changes without affecting the main codebase.
+        It is essentially a lightweight pointer to a specific commit.
+        Branches are commonly used for tasks such as bug fixes,
+        feature development, or experimentation.
+    saved  
+    it's message
+
+"Version Zero"
+World/Map
+    - 2D grid
+    - limited, for now. 100x100 Origin is center of the map
+    - we can put agents in it
+
+Agent types:
+    - agents move freely on the map, not constrained by the grid
+    - common stats among all agents:
+        - health
+        - attack damage
+        - attack rate
+        - movement speed
+    - dynamic variables (change constantly during gametime)
+        - movement direction
+        - shooting direction
+
+    - Good guys - Schnorks
+        - movement
+            - move away from enemies
+        - shooting attack
+            - shoot towards nearest enemy
+    - bad - Ants
+        - Melee attack
+        - spawn in (randomly) on the map
+        - move towards the nearest Shnork (slowly), maybe with some random noise in movement
+
+
+Second stage agent abilities:
+    - communication
+    - constrained vision
+        - like robot war, with "scanning"
+        - to start, assume we can always identify nearest enemy (all enemies), etc.
+
+Third Stage
+     - Reproduction, evolution
+     - Cooperation

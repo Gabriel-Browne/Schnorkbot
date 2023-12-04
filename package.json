@@ -1,0 +1,15 @@
+{
+  "name": "schnorkbot",
+  "version": "1.0.0",
+  "description": "Shnorkbot is a game where three players collaborate to survive in an endless arena of enemies for as long as possible.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pixi.js": "^7.3.2"
+  }
+}
