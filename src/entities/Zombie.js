@@ -9,10 +9,11 @@ class Zombie {
   constructor(x, y) {
     this.positionComponent = new PositionComponent(x, y);
     this.movementComponent = new MovementComponent(ZOMBIE_SPEED);
+
     this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     this.sprite.anchor.set(0.5);
     this.sprite.position.set(x, y);
   }
 }
-
+// console.log(zom)
 export default Zombie;

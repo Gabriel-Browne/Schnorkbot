@@ -30,6 +30,10 @@ class MovementSystem {
       movement.direction.y *= -1;
     }
   }
+
+  // updateAll(entities) {
+  //   entities.forEach(entity => this.update(entity));
+  // }
 }
 
 export default MovementSystem;
