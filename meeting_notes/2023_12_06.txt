@@ -1,0 +1,28 @@
+Entity Component Systems
+
+Entities are composed of Components
+
+Systems operate on Components and perform operations on them
+
+
+Zombie
+    - Movement Component
+    - Position Component
+
+Movement System
+    - for each entity,
+        - update its position component based on its movement component
+        - has logic to avoid walls, etc.
+
+
+
+VS Notes:
+- F2 to rename a variable or function to anything and have it be applied across code
+- click and drag a file from te explorer or top bar and drag it to open in another panel
+- F12 or right click and "Go to Definition" to 
+
+How to get going:
+- on command line, change directory into the Schnorkbot repository (Documents/Github/Schnorkbot) using cd
+- `npm install` - necessary any time we install new packages (i.e. add new dependencies)
+- `npm start`
+- in browser goto: localhost:8080
