@@ -5,8 +5,8 @@ class MovementSystem {
   }
 
   update(entity) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
+    const position = entity.position;
+    const movement = entity.movement;
 
     position.x += movement.direction.x * movement.speed;
     position.y += movement.direction.y * movement.speed;

@@ -4,6 +4,7 @@ import Zombie from './entities/Zombie.js';
 import EntityManager from './utils/EntityManager.js';
 import MovementSystem from './systems/MovementSystem.js';
 import RenderSystem from './systems/RenderSystem.js';
+import CollisionSystem from './systems/CollisionSystem.js';
 
 const app = new PIXI.Application({
   width: window.innerWidth,
@@ -11,13 +12,14 @@ const app = new PIXI.Application({
   backgroundColor: 0x1099bb,
 });
 
-const NUM_ZOMBIES = 10;
+const NUM_ZOMBIES = 5;
 const DIRECTION_CHANGE_MAGNITUDE = 0.1;
 
 document.body.appendChild(app.view);
 
 const entityManager = new EntityManager();
 const movementSystem = new MovementSystem(app.view.width, app.view.height);
+const collisionSystem = new CollisionSystem();
 
 for (let i = 0; i < NUM_ZOMBIES; i++) {
   const zombie = new Zombie(
@@ -40,13 +42,13 @@ function nudgeDirectionRandomly(direction) {
 }
 function gameLoop() {
   for (const entity of entityManager.entities) {
-    const currDirection = entity.movementComponent.getDirection();
+    const currDirection = entity.movement.getDirection();
     const newDirection = nudgeDirectionRandomly(currDirection);
-    entity.movementComponent.setDirection(newDirection.x, newDirection.y);
-
+    entity.movement.setDirection(newDirection.x, newDirection.y);
     movementSystem.update(entity);
     RenderSystem.update(entity);
   }
+  collisionSystem.update(entityManager.entities);
 
   app.renderer.render(app.stage);
   requestAnimationFrame(gameLoop);

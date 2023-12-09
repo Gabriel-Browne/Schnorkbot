@@ -12,6 +12,10 @@ class PositionComponent {
   getPosition() {
     return { x: this.x, y: this.y };
   }
+
+  toString() {
+    return `(${this.x}, ${this.y})`;
+  }
 }
 
 export default PositionComponent;
