@@ -23,6 +23,7 @@ VS Notes:
 
 How to get going:
 - on command line, change directory into the Schnorkbot repository (Documents/Github/Schnorkbot) using cd
+    cd c:\Users\Gabriel Browne\Documents\GitHub
 - `npm install` - necessary any time we install new packages (i.e. add new dependencies)
 - `npm start`
 - in browser goto: localhost:8080
