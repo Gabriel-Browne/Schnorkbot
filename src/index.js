@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 import Zombie from './entities/Zombie.js';
+import Bot from './entities/Bot.js';
 import EntityManager from './utils/EntityManager.js';
 import MovementSystem from './systems/MovementSystem.js';
 import RenderSystem from './systems/RenderSystem.js';
@@ -12,7 +13,7 @@ const app = new PIXI.Application({
 });
 
 const NUM_ZOMBIES = 10;
-const DIRECTION_CHANGE_MAGNITUDE = 0.1;
+const NUM_BOTS = 10;
 
 document.body.appendChild(app.view);
 
@@ -20,6 +21,24 @@ const entityManager = new EntityManager();
 const movementSystem = new MovementSystem(app.view.width, app.view.height);
 
 for (let i = 0; i < NUM_ZOMBIES; i++) {
+  addZombie();
+}
+
+for (let i = 0; i < NUM_BOTS; i++) {
+  addBot();
+}
+
+function gameLoop() {
+  movementSystem.updateAll(entityManager.entities);
+  RenderSystem.updateAll(entityManager.entities);
+
+  app.renderer.render(app.stage);
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+function addZombie() {
   const zombie = new Zombie(
     app.view.width * Math.random(),
     app.view.height * Math.random()
@@ -28,28 +47,11 @@ for (let i = 0; i < NUM_ZOMBIES; i++) {
   app.stage.addChild(zombie.sprite);
 }
 
-// helper function that takes in a direction (with x and y component) and outputs that direction with a "random nudge"
-function nudgeDirectionRandomly(direction) {
-  const randomA = DIRECTION_CHANGE_MAGNITUDE * (Math.random() * 2 - 1);
-  const randomB = DIRECTION_CHANGE_MAGNITUDE * (Math.random() * 2 - 1);
-
-  return {
-    x: direction.x + randomA,
-    y: direction.y + randomB,
-  };
+function addBot() {
+  const bot = new Bot(
+    app.view.width * Math.random(),
+    app.view.height * Math.random()
+  );
+  entityManager.addEntity(bot);
+  app.stage.addChild(bot.sprite);
 }
-function gameLoop() {
-  for (const entity of entityManager.entities) {
-    const currDirection = entity.movementComponent.getDirection();
-    const newDirection = nudgeDirectionRandomly(currDirection);
-    entity.movementComponent.setDirection(newDirection.x, newDirection.y);
-
-    movementSystem.update(entity);
-    RenderSystem.update(entity);
-  }
-
-  app.renderer.render(app.stage);
-  requestAnimationFrame(gameLoop);
-}
-
-gameLoop();

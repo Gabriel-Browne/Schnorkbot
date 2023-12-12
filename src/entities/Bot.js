@@ -3,17 +3,18 @@ import * as PIXI from 'pixi.js';
 import PositionComponent from '../components/PositionComponent.js';
 import MovementComponent from '../components/MovementComponent.js';
 
-const ZOMBIE_SPEED = 1;
+const BOT_SPEED = 2;
 
-class Zombie {
+class Bot {
   constructor(x, y) {
     this.positionComponent = new PositionComponent(x, y);
-    this.movementComponent = new MovementComponent(ZOMBIE_SPEED);
+    this.movementComponent = new MovementComponent(BOT_SPEED);
     this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this.sprite.tint = 0xff0000;
+    // change color to green
+    this.sprite.tint = 0x00ff00;
     this.sprite.anchor.set(0.5);
     this.sprite.position.set(x, y);
   }
 }
 
-export default Zombie;
+export default Bot;
