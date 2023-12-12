@@ -7,6 +7,8 @@ import MovementSystem from './systems/MovementSystem.js';
 import RenderSystem from './systems/RenderSystem.js';
 import ZombieAi from './systems/ZombieAi.js';
 import BotAi from './systems/BotAi.js';
+import Boid from './entities/Boid.js';
+import BoidAi from './systems/BoidAi.js';
 
 const app = new PIXI.Application({
   width: window.innerWidth,
@@ -14,8 +16,9 @@ const app = new PIXI.Application({
   backgroundColor: 0x1099bb,
 });
 
-const NUM_ZOMBIES = 10;
-const NUM_BOTS = 10;
+const NUM_ZOMBIES = 1;
+const NUM_BOTS = 1;
+const NUM_BOIDS = 10;
 
 document.body.appendChild(app.view);
 
@@ -30,12 +33,18 @@ for (let i = 0; i < NUM_BOTS; i++) {
   addBot();
 }
 
+for (let i = 0; i < NUM_BOIDS; i++) {
+  addBoid();
+}
+
 const zombieAi = new ZombieAi(entityManager.entities);
 const botAi = new BotAi(entityManager.entities);
+const boidAi = new BoidAi(entityManager.entities);
 
 function gameLoop() {
   zombieAi.updateAll();
   botAi.updateAll();
+  boidAi.updateAll();
   movementSystem.updateAll(entityManager.entities);
   RenderSystem.updateAll(entityManager.entities);
 
@@ -61,4 +70,13 @@ function addBot() {
   );
   entityManager.addEntity(bot);
   app.stage.addChild(bot.sprite);
+}
+
+function addBoid() {
+  const boid = new Boid(
+    app.view.width * Math.random(),
+    app.view.height * Math.random()
+  );
+  entityManager.addEntity(boid);
+  app.stage.addChild(boid.sprite);
 }

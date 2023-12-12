@@ -1,8 +1,10 @@
 import Zombie from '../entities/Zombie';
 import Bot from '../entities/Bot';
+import Boid from '../entities/Boid';
 
 class BaseAi {
   constructor(entities) {
+    this.boids = entities.filter((entity) => entity instanceof Boid);
     this.bots = entities.filter((entity) => entity instanceof Bot);
     this.zombies = entities.filter((entity) => entity instanceof Zombie);
   }
@@ -41,34 +43,42 @@ class BaseAi {
     );
   }
 
+  getDirectionVector(source, target) {
+    const pos = source.positionComponent || source.position || source;
+    const targetPos = target.positionComponent || target.position || target;
+
+    const angle = Math.atan2(targetPos.y - pos.y, targetPos.x - pos.x);
+
+    return {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
+  }
+
+  getPositionVector(source, target) {
+    const sourcePosition =
+      source.positionComponent || source.position || source;
+    const targetPosition =
+      target.positionComponent || target.position || target;
+
+    return {
+      x: targetPosition.x - sourcePosition.x,
+      y: targetPosition.y - sourcePosition.y,
+    };
+  }
+
   setMovementTowards(entity, target) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
-
-    const targetPosition = target.positionComponent;
-
-    const angle = Math.atan2(
-      targetPosition.y - position.y,
-      targetPosition.x - position.x
-    );
-
-    movement.direction.x = Math.cos(angle);
-    movement.direction.y = Math.sin(angle);
+    const direction = this.getDirectionVector(entity, target);
+    const movement = entity.movementComponent || entity.movement;
+    movement.direction.x = direction.x;
+    movement.direction.y = direction.y;
   }
 
   setMovementAwayFrom(entity, target) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
-
-    const targetPosition = target.positionComponent;
-
-    const angle = Math.atan2(
-      targetPosition.y - position.y,
-      targetPosition.x - position.x
-    );
-
-    movement.direction.x = -Math.cos(angle);
-    movement.direction.y = -Math.sin(angle);
+    const direction = this.getDirectionVector(entity, target);
+    const movement = entity.movementComponent || entity.movement;
+    movement.direction.x = -direction.x;
+    movement.direction.y = -direction.y;
   }
 
   jiggleMovement(entity, magnitude = 0.1) {
