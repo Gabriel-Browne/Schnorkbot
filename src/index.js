@@ -5,6 +5,8 @@ import Bot from './entities/Bot.js';
 import EntityManager from './utils/EntityManager.js';
 import MovementSystem from './systems/MovementSystem.js';
 import RenderSystem from './systems/RenderSystem.js';
+import ZombieAi from './systems/ZombieAi.js';
+import BotAi from './systems/BotAi.js';
 
 const app = new PIXI.Application({
   width: window.innerWidth,
@@ -28,7 +30,12 @@ for (let i = 0; i < NUM_BOTS; i++) {
   addBot();
 }
 
+const zombieAi = new ZombieAi(entityManager.entities);
+const botAi = new BotAi(entityManager.entities);
+
 function gameLoop() {
+  zombieAi.updateAll();
+  botAi.updateAll();
   movementSystem.updateAll(entityManager.entities);
   RenderSystem.updateAll(entityManager.entities);
 
