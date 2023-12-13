@@ -2,9 +2,9 @@ import Zombie from '../entities/Zombie';
 import Bot from '../entities/Bot';
 import BaseAi from './BaseAi';
 
-const WEIGHTS = { separation: 0.4, alignment: 0.3, cohesion: 0.3 };
-const RADIUS = 100;
-const SEPARATION_RADIUS = 20;
+const WEIGHTS = { separation: 0.55, alignment: 0.55, cohesion: 0.55 };
+const RADIUS = 80;
+const SEPARATION_RADIUS = 10;
 
 class BoidAi extends BaseAi {
   updateAll() {
@@ -21,30 +21,41 @@ class BoidAi extends BaseAi {
     // cohesion
     //     boids try to stay close to each other
     const neighbors = this.getBoidsInRadius(boid, RADIUS);
-    const currentDirection = boid.movementComponent.direction;
-    console.log(currentDirection);
-    let separationDirection =
-      this.separation(boid, neighbors) || currentDirection;
-    let alignmentDirection =
-      this.alignment(boid, neighbors) || currentDirection;
-    let cohesionDirection = this.cohesion(boid, neighbors) || currentDirection;
 
-    console.log(separationDirection, alignmentDirection, cohesionDirection);
-    const velocity = {
-      x:
-        separationDirection.x * WEIGHTS.separation +
-        alignmentDirection.x * WEIGHTS.alignment +
-        cohesionDirection.x * WEIGHTS.cohesion,
-      y:
-        separationDirection.y * WEIGHTS.separation +
-        alignmentDirection.y * WEIGHTS.alignment +
-        cohesionDirection.y * WEIGHTS.cohesion,
-    };
-    console.log(velocity);
-    if (!(velocity.x instanceof Number) || !(velocity.y instanceof Number)) {
+    let separationDirection = this.separation(boid, neighbors);
+    let alignmentDirection = this.alignment(boid, neighbors);
+    let cohesionDirection = this.cohesion(boid, neighbors);
+
+    // console.log(separationDirection, alignmentDirection, cohesionDirection);
+
+    if (this.getDistanceToClosestWall(boid) < 50) {
+      this.jiggleMovement(boid, 1);
       return;
     }
-    this.setMovementTowards(boid, velocity);
+
+    if (!separationDirection && !alignmentDirection && !cohesionDirection) {
+      this.jiggleMovement(boid);
+      return;
+    }
+
+    // console.log(this.getDistanceToClosestWall(boid))
+
+    const velocity = { x: 0, y: 0 };
+    if (separationDirection) {
+      velocity.x += separationDirection.x * WEIGHTS.separation;
+      velocity.y += separationDirection.y * WEIGHTS.separation;
+    }
+    if (alignmentDirection) {
+      velocity.x += alignmentDirection.x * WEIGHTS.alignment;
+      velocity.y += alignmentDirection.y * WEIGHTS.alignment;
+    }
+    if (cohesionDirection) {
+      velocity.x += cohesionDirection.x * WEIGHTS.cohesion;
+      velocity.y += cohesionDirection.y * WEIGHTS.cohesion;
+    }
+    this.setDirection(boid, velocity);
+    this.jiggleMovement(boid);
+    return;
   }
 
   separation(boid, neighbors) {
@@ -62,19 +73,26 @@ class BoidAi extends BaseAi {
     if (neighbors.length === 0) {
       return;
     }
-    // a dictionary mapping neighbors to their distances
-    const distances = {};
-    for (const neighbor of neighbors) {
-      distances[neighbor] = this.getDistance(boid, neighbor);
-    }
-    const normalizedDistances = this.normalizeDictionary(distances);
+    const normalizedDistances = this.getNormalizedDistances(boid, neighbors);
+
     const velocity = { x: 0, y: 0 };
+    // const velocity = boid.movementComponent.direction;
     for (const neighbor of neighbors) {
-      const direction = this.getDirectionVector(boid, neighbor);
+      // const direction = this.getDirectionVector(boid, neighbor);
+      const direction = neighbor.movementComponent.direction;
       velocity.x += direction.x * normalizedDistances[neighbor];
       velocity.y += direction.y * normalizedDistances[neighbor];
     }
     return velocity;
+  }
+
+  cohesion(boid, neighbors) {
+    if (neighbors.length === 0) {
+      return;
+    }
+    const center = this.getCenter(neighbors);
+    const direction = this.getDirectionVector(boid, center);
+    return direction;
   }
 
   normalizeDictionary(dictionary) {
@@ -88,13 +106,18 @@ class BoidAi extends BaseAi {
     }
     return normalized;
   }
-  cohesion(boid, neighbors) {
-    if (neighbors.length === 0) {
-      return;
+
+  getDistances(boid, others) {
+    const distances = {};
+    for (const other of others) {
+      distances[other] = this.getDistance(boid, other);
     }
-    const center = this.getCenter(neighbors);
-    const direction = this.getDirectionVector(boid, center);
-    return direction;
+    return distances;
+  }
+
+  getNormalizedDistances(boid, others) {
+    const distances = this.getDistances(boid, others);
+    return this.normalizeDictionary(distances);
   }
 
   getCenter(boids) {
@@ -108,9 +131,19 @@ class BoidAi extends BaseAi {
     return center;
   }
 
+  getCurrentDirection(boidOrMovement) {
+    const movement = boidOrMovement.movementComponent
+      ? boidOrMovement.movementComponent
+      : boid;
+    return movement.direction;
+  }
+
   getBoidsInRadius(boid, radius) {
     let boidsInRadius = [];
     for (const b of this.boids) {
+      if (b === boid) {
+        continue;
+      }
       const distance = this.getDistance(boid, b);
       if (distance < radius) {
         boidsInRadius.push(b);

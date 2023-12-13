@@ -16,9 +16,10 @@ const app = new PIXI.Application({
   backgroundColor: 0x1099bb,
 });
 
-const NUM_ZOMBIES = 1;
-const NUM_BOTS = 1;
-const NUM_BOIDS = 10;
+const NUM_ZOMBIES = 0;
+const NUM_BOTS = 0;
+const NUM_BOIDS = 80;
+const STOP_TICKS = 10000;
 
 document.body.appendChild(app.view);
 
@@ -41,7 +42,13 @@ const zombieAi = new ZombieAi(entityManager.entities);
 const botAi = new BotAi(entityManager.entities);
 const boidAi = new BoidAi(entityManager.entities);
 
+let ticks = 0;
+
 function gameLoop() {
+  ticks += 1;
+  if (ticks > STOP_TICKS) {
+    return;
+  }
   zombieAi.updateAll();
   botAi.updateAll();
   boidAi.updateAll();

@@ -33,9 +33,13 @@ class BaseAi {
     return closest;
   }
 
-  getDistance(entity1, entity2) {
-    const position1 = entity1.positionComponent;
-    const position2 = entity2.positionComponent;
+  getDistance(entityOrPositionA, entityOrPositionB) {
+    const position1 = entityOrPositionA.positionComponent
+      ? entityOrPositionA.positionComponent
+      : entityOrPositionA;
+    const position2 = entityOrPositionB.positionComponent
+      ? entityOrPositionB.positionComponent
+      : entityOrPositionB;
 
     return Math.sqrt(
       Math.pow(position1.x - position2.x, 2) +
@@ -44,10 +48,18 @@ class BaseAi {
   }
 
   getDirectionVector(source, target) {
-    const pos = source.positionComponent || source.position || source;
-    const targetPos = target.positionComponent || target.position || target;
+    const position = source.positionComponent
+      ? source.positionComponent
+      : source;
 
-    const angle = Math.atan2(targetPos.y - pos.y, targetPos.x - pos.x);
+    const targetPosition = target.positionComponent
+      ? target.positionComponent
+      : target;
+
+    const angle = Math.atan2(
+      targetPosition.y - position.y,
+      targetPosition.x - position.x
+    );
 
     return {
       x: Math.cos(angle),
@@ -56,10 +68,12 @@ class BaseAi {
   }
 
   getPositionVector(source, target) {
-    const sourcePosition =
-      source.positionComponent || source.position || source;
-    const targetPosition =
-      target.positionComponent || target.position || target;
+    const sourcePosition = source.positionComponent
+      ? source.positionComponent
+      : source;
+    const targetPosition = target.positionComponent
+      ? target.positionComponent
+      : target;
 
     return {
       x: targetPosition.x - sourcePosition.x,
@@ -67,24 +81,80 @@ class BaseAi {
     };
   }
 
-  setMovementTowards(entity, target) {
-    const direction = this.getDirectionVector(entity, target);
-    const movement = entity.movementComponent || entity.movement;
+  setDirection(entity, direction) {
+    const movement = entity.movementComponent;
     movement.direction.x = direction.x;
     movement.direction.y = direction.y;
   }
 
-  setMovementAwayFrom(entity, target) {
+  setMovementTowards(entity, target) {
     const direction = this.getDirectionVector(entity, target);
-    const movement = entity.movementComponent || entity.movement;
-    movement.direction.x = -direction.x;
-    movement.direction.y = -direction.y;
+    this.setDirection(entity, direction);
   }
 
-  jiggleMovement(entity, magnitude = 0.1) {
-    const movement = entity.movementComponent;
+  setMovementAwayFrom(entity, target) {
+    const direction = this.getDirectionVector(entity, target);
+    direction.x *= -1;
+    direction.y *= -1;
+    this.setDirection(entity, direction);
+  }
+
+  jiggleMovement(entityOrMovement, magnitude = 1) {
+    const movement = entityOrMovement.movementComponent
+      ? entityOrMovement.movementComponent
+      : entity;
+
     movement.direction.x += this.randomNormal() * magnitude - magnitude / 2;
     movement.direction.y += this.randomNormal() * magnitude - magnitude / 2;
+    return movement;
+  }
+
+  getMapCenter() {
+    return {
+      x: this.mapWidth / 2,
+      y: this.mapHeight / 2,
+    };
+  }
+
+  getClosestWall(entity) {
+    const position = entity.positionComponent;
+    const mapCenter = this.getMapCenter();
+    const difference = this.getPositionVector(position, mapCenter);
+    const horizontalDistance = Math.abs(difference.x);
+    const verticalDistance = Math.abs(difference.y);
+    // closer to vertical wall or horizontal wall?
+
+    if (horizontalDistance < verticalDistance) {
+      if (difference.x > 0) {
+        return 'right';
+      } else {
+        return 'left';
+      }
+    } else {
+      if (difference.y > 0) {
+        return 'bottom';
+      } else {
+        return 'top';
+      }
+    }
+  }
+
+  getDistanceToClosestWall(entity) {
+    const position = entity.positionComponent;
+    const closestWall = this.getClosestWall(entity);
+    if (closestWall === 'top') {
+      return position.y;
+    }
+    if (closestWall === 'bottom') {
+      return this.mapHeight - position.y;
+    }
+    if (closestWall === 'left') {
+      return position.x;
+    }
+    if (closestWall === 'right') {
+      return this.mapWidth - position.x;
+    }
+    return null;
   }
 
   /*
