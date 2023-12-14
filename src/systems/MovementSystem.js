@@ -14,8 +14,8 @@ class MovementSystem {
   }
 
   update(entity) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
+    const position = entity.position;
+    const movement = entity.velocity;
 
     // Calculate the angle in radians
     const angle = Math.atan2(movement.direction.y, movement.direction.x);

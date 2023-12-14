@@ -6,6 +6,7 @@ class BaseAi {
     this.bots = entities.filter((entity) => entity instanceof Bot);
     this.zombies = entities.filter((entity) => entity instanceof Zombie);
   }
+
   // abstract method upateAll()
   updateAll() {
     pass;
@@ -15,6 +16,7 @@ class BaseAi {
   update() {
     pass;
   }
+
   getClosest(entity, entities) {
     let closest = null;
     let closestDistance = Infinity;
@@ -31,50 +33,52 @@ class BaseAi {
     return closest;
   }
 
-  getDistance(entity1, entity2) {
-    const position1 = entity1.positionComponent;
-    const position2 = entity2.positionComponent;
-
-    return Math.sqrt(
-      Math.pow(position1.x - position2.x, 2) +
-        Math.pow(position1.y - position2.y, 2)
-    );
+  getDistance(entityA, entityB) {
+    return entityA.position.getDistance(entityB.position);
   }
 
-  setMovementTowards(entity, target) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
+  setDirectionTowards(sourceEntity, targetEntity) {
+    const direction = this.getDirectionTowards(sourceEntity, targetEntity);
+    sourceEntity.velocity.setDirection(direction.x, direction.y);
+  }
 
-    const targetPosition = target.positionComponent;
+  getDirectionTowards(sourceEntity, targetEntity) {
+    const sourcePosition = sourceEntity.position;
+    const targetPosition = targetEntity.position;
 
     const angle = Math.atan2(
-      targetPosition.y - position.y,
-      targetPosition.x - position.x
+      targetPosition.y - sourcePosition.y,
+      targetPosition.x - sourcePosition.x
     );
 
-    movement.direction.x = Math.cos(angle);
-    movement.direction.y = Math.sin(angle);
+    return { x: Math.cos(angle), y: Math.sin(angle) };
   }
 
-  setMovementAwayFrom(entity, target) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
-
-    const targetPosition = target.positionComponent;
-
-    const angle = Math.atan2(
-      targetPosition.y - position.y,
-      targetPosition.x - position.x
+  getDirectionAwayFrom(sourceEntity, targetEntity) {
+    const directionTowards = this.getDirectionTowards(
+      sourceEntity,
+      targetEntity
     );
-
-    movement.direction.x = -Math.cos(angle);
-    movement.direction.y = -Math.sin(angle);
+    // inverse the "directionTowards"
+    return { x: -directionTowards.x, y: -directionTowards.y };
   }
 
-  jiggleMovement(entity, magnitude = 0.1) {
-    const movement = entity.movementComponent;
-    movement.direction.x += this.randomNormal() * magnitude - magnitude / 2;
-    movement.direction.y += this.randomNormal() * magnitude - magnitude / 2;
+  setDirectionAwayFrom(entity, target) {
+    const direction = this.getDirectionAwayFrom(entity, target);
+    entity.velocity.setDirection(direction.x, direction.y);
+  }
+
+  jiggle(entity, magnitude = 0.1) {
+    const jiggle = this.getJiggle(entity, magnitude);
+    entity.velocity.setDirection(jiggle.x, jiggle.y);
+  }
+
+  getJiggle(entity, magnitude = 0.1) {
+    const movement = entity.velocity;
+    return {
+      x: movement.direction.x + this.randomNormal() * magnitude - magnitude / 2,
+      y: movement.direction.y + this.randomNormal() * magnitude - magnitude / 2,
+    };
   }
 
   /*

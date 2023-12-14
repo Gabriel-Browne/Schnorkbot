@@ -15,9 +15,9 @@ class BotAi extends BaseAi {
     }
     const closest = this.getClosest(bot, this.zombies);
     if (closest) {
-      this.setMovementAwayFrom(bot, closest);
+      this.setDirectionAwayFrom(bot, closest);
     } else {
-      this.jiggleMovement(bot);
+      this.jiggle(bot);
     }
   }
 }

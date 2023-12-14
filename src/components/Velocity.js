@@ -1,4 +1,4 @@
-class MovementComponent {
+class Velocity {
   constructor(speed = 1) {
     this.speed = speed;
     this.direction = { x: 0, y: 0 };
@@ -24,4 +24,4 @@ class MovementComponent {
   }
 }
 
-export default MovementComponent;
+export default Velocity;

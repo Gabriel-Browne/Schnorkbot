@@ -15,9 +15,9 @@ class ZombieAi extends BaseAi {
     }
     const closest = this.getClosest(zombie, this.bots);
     if (closest) {
-      this.setMovementTowards(zombie, closest);
+      this.setDirectionTowards(zombie, closest);
     } else {
-      this.jiggleMovement(zombie);
+      this.jiggle(zombie);
     }
   }
 }
