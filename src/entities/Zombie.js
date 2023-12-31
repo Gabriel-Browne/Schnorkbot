@@ -7,6 +7,7 @@ const ZOMBIE_SPEED = 1;
 
 class Zombie {
   constructor(x, y) {
+    this.chunk = -1;
     this.position = new Position(x, y);
     this.velocity = new Velocity(ZOMBIE_SPEED);
     this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);

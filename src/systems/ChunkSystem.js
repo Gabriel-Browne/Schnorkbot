@@ -1,16 +1,15 @@
+import Chunk from '../components/Chunk.js';
+
 class ChunkSystem {
   constructor(chunkResolution) {
     this.chunkResolution = chunkResolution;
     this.chunks = {};
-    this.entityChunks = {};
+    this.entityChunkKey = {};
   }
 
   updateAll(entities) {
-    let position, chunkX, chunkY, chunkKey, entity;
-    for (entity of entities) {
-      const chunkKey = this.getChunkKey(entity.position);
-
-      this.addEntityToChunk(chunkKey, entity);
+    for (const entity of entities) {
+      this.updateEntityChunk(entity);
     }
   }
 
@@ -20,67 +19,112 @@ class ChunkSystem {
     return chunkX, chunkY;
   }
 
-  addEntityToChunk(chunkKey, entity) {
+  updateEntityChunk(entity) {
+    const chunkKey = this.getChunkKey(entity.position);
+
+    const oldChunkKey = this.entityChunkKey[entity];
+
+    // delete the entity from its last chunk
+    if (oldChunkKey in this.chunks) {
+      this.chunks[oldChunkKey].deleteEntity(entity);
+    }
+
+    // instantiate a new chunk if necessary,
+    // put the entity inside of it
     if (chunkKey in this.chunks) {
-      this.chunks[chunkKey].add(entity);
+      this.chunks[chunkKey].addEntity(entity);
     } else {
-      this.chunks[chunkKey] = new Set([entity])
+      // there's a shorthand to do this. in python its **chunkKey instead of how I parameterize here
+      // don't know how to do it in JavaScript though
+      this.chunks[chunkKey] = new Chunk(chunkKey[0], chunkKey[1]);
     }
+    // update the entityChunk map so we can lookup both ways
+    this.entityChunkKey[entity] = chunkKey;
   }
 
-  removeEntityFromLastChunk(chunkKey, entity) {
-    const visited = new Set();
-    const frontier = [chunkKey];
-    let currChunk, neighbors, neighbor;
-    while (frontier.length > 0) {
-      currChunk = frontier.pop();
-      neighbors = this.getNeighborChunks(chunkKey);
+  getNeighbors(chunk) {
+    const chunkKey = (chunk.row, chunk.col);
+    return [
+      this.getNorthChunk(chunkKey),
+      this.getNorthEastChunk(chunkKey),
+      this.getEastChunk(chunkKey),
+      this.getSouthEastChunk(chunkKey),
+      this.getSouthChunk(chunkKey),
+      this.getSouthWestChunk(chunkKey),
+      this.getWestChunk(chunkKey),
+      this.getNorthWestChunk(chunkKey),
+    ];
+  }
 
-      if (entity
+  getNorthChunk(chunkKey) {
+    return this.getChunk(this.getNorthChunkKey(chunkKey));
+  }
 
-      // add unvisited neighbors to the fontier
-      for (neighbor of neighbors) {
-        if (!neighbor in visited) {
-          frontier.append(neighbor);
-        }
-      }
+  getEastChunk(chunkKey) {
+    return this.getChunk(this.getEastChunkKey(chunkKey));
+  }
+  getSouthChunk(chunkKey) {
+    return this.getChunk(this.getSouthChunkKey(chunkKey));
+  }
+
+  getWestChunk(chunkKey) {
+    return this.getChunk(this.getWestChunkKey(chunkKey));
+  }
+
+  getNorthEastChunk(chunkKey) {
+    return this.getChunk(this.getNorthEastChunkKey(chunkKey));
+  }
+  getSouthEastChunk(chunkKey) {
+    return this.getChunk(this.getSouthEastChunkKey(chunkKey));
+  }
+
+  getSouthWestChunk(chunkKey) {
+    return this.getChunk(this.getSouthWestChunkKey(chunkKey));
+  }
+
+  getNorthWestChunk(chunkKey) {
+    return this.getChunk(this.getNorthWestKey(chunkKey));
+  }
+
+  getNorthChunkKey(chunkKey) {
+    return chunkKey[0], chunkKey[1] - 1;
+  }
+
+  getEastChunkKey(chunkKey) {
+    return chunkKey[0] + 1, chunkKey[1];
+  }
+
+  getSouthChunkKey(chunkKey) {
+    return chunkKey[0], chunkKey[1] + 1;
+  }
+
+  getWestChunkKey(chunkKey) {
+    return chunkKey[0] - 1, chunkKey[1];
+  }
+
+  getNorthEastChunkKey(chunkKey) {
+    return chunkKey[0] + 1, chunkKey[1] - 1;
+  }
+
+  getSouthEastChunkKey(chunkKey) {
+    return chunkKey[0] + 1, chunkKey[1] + 1;
+  }
+
+  getSouthWestChunkKey(chunkKey) {
+    return chunkKey[0] - 1, chunkKey[1] + 1;
+  }
+
+  getNorthWestChunkKey(chunkKey) {
+    return chunkKey[0] - 1, chunkKey[1] - 1;
+  }
+
+  getChunk(chunkKey) {
+    if (chunkKey in this.chunks) {
+      return this.chunks[chunkKey];
     }
-  }
-
-  getNeighborChunks(chunkKey) {
-    const neighborKeys = [];
-    const chunkX = chunkKey[0];
-    const chunkY = chunkKey[1];
-    for (let neighborX = chunkX - 1; neighborX < chunkX + 2; neighborX++) {
-      for (let neighborY = chunkY - 1; neighborY < chunkY + 2; neighborY++) {
-        const neighborKey = (neighborX, neighborY);
-        if (neighborKey in this.chunks && neighborKey != chunkKey) {
-          neighborKeys.append(chunkKey);
-        }
-      }
-    }
-    return neighborKeys;
-  }
-
-  entityInChunk(chunkKey, entity) {
-    return entity in this.chunks[chunkKey];
-  }
-
-  removeEntityFromChunk(chunkKey) {
-  }
-
-  removeEntityFromChunks(chunkKeys, entity) {
-    for (const chunkKey of chunkKeys) {
-      if (!chunkKey in this.chunks) continue;
-      const chunk = this.chunks[chunkKey];
-
-      if (this.entityInChunk(chunkKey, entity)) {
-        // find the index of the entity in the chunk (which is just a list of entities)
-        const chunkIndex = this.chunks[chunkKey].indexOf(entity);
-        this.chunks[chunkKey].pop(chunkIndex);
-        return true;
-      }
-    }
-    return false;
+    // we could put `else` here, but that would be redundant
+    return null;
   }
 }
+
+export default ChunkSystem;
