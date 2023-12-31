@@ -56,6 +56,13 @@ class ChunkSystem {
     ];
   }
 
+  getNeighborhood(chunk) {
+    // the neighborhood is just chunk's neighbors plus chunk
+    const neighborhood = this.getNeighbors(chunk);
+    neighborhood.push(chunk);
+    return neighborhood;
+  }
+
   getNorthChunk(chunkKey) {
     return this.getChunk(this.getNorthChunkKey(chunkKey));
   }
@@ -124,6 +131,11 @@ class ChunkSystem {
     }
     // we could put `else` here, but that would be redundant
     return null;
+  }
+
+  getEntityChunk(entity) {
+    const chunkKey = this.entityChunkKey[entity];
+    return this.chunks[chunkKey];
   }
 }
 
