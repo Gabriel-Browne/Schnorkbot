@@ -10,13 +10,16 @@ class ChunkSystem {
   updateAll(entities) {
     for (const entity of entities) {
       this.updateEntityChunk(entity);
+      console.log(this.chunks);
+      console.log(this.entityChunkKey);
     }
   }
 
   getChunkKey(position) {
     const chunkX = Math.round(position.x / this.chunkResolution);
     const chunkY = Math.round(position.y / this.chunkResolution);
-    return chunkX, chunkY;
+    // lol
+    return { x: chunkX, y: chunkY };
   }
 
   updateEntityChunk(entity) {
@@ -94,6 +97,11 @@ class ChunkSystem {
   }
 
   getNorthChunkKey(chunkKey) {
+    let chunkKeyTuple = [];
+    let chunkKeyStrTuple = chunkKey.split(',');
+    for (const s of chunkKeyStrTuple) {
+      chunkKeyTuple.push(Number(s));
+    }
     return chunkKey[0], chunkKey[1] - 1;
   }
 

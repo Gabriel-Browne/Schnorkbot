@@ -7,6 +7,7 @@ import RenderSystem from './systems/RenderSystem.js';
 import ZombieAi from './systems/ZombieAi.js';
 import BotAi from './systems/BotAi.js';
 import ChunkSystem from './systems/ChunkSystem.js';
+import CollisionSystem from './systems/CollisionSystem.js';
 
 const app = new PIXI.Application({
   width: window.innerWidth,
@@ -22,6 +23,7 @@ document.body.appendChild(app.view);
 const entities = [];
 const movementSystem = new MovementSystem(app.view.width, app.view.height);
 const chunkSystem = new ChunkSystem(5);
+const collisionSystem = new CollisionSystem(chunkSystem);
 
 for (let i = 0; i < NUM_ZOMBIES; i++) {
   addZombie();
@@ -40,6 +42,7 @@ function gameLoop() {
   movementSystem.updateAll(entities);
   RenderSystem.updateAll(entities);
   chunkSystem.updateAll(entities);
+  collisionSystem.updateAll(entities);
 
   app.renderer.render(app.stage);
   requestAnimationFrame(gameLoop);
