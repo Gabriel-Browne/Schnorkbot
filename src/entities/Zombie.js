@@ -1,5 +1,6 @@
-import * as PIXI from 'pixi.js';
+// this entity definition is basically a copy-paste of the Bot entity definition, so refer to that for comments.
 
+import * as PIXI from 'pixi.js';
 import Position from '../components/Position.js';
 import Velocity from '../components/Velocity.js';
 
