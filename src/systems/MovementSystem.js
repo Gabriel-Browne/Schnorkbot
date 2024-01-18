@@ -4,30 +4,38 @@ class MovementSystem {
     this.mapHeight = mapHeight;
   }
 
-  update(entity) {
-    const position = entity.positionComponent;
-    const movement = entity.movementComponent;
+  updateAll(entities) {
+    for (const entity of entities) {
+      this.update(entity);
+    }
+  }
 
-    position.x += movement.direction.x * movement.speed;
-    position.y += movement.direction.y * movement.speed;
+  // position = position + velocity
+  update(entity) {
+    const position = entity.position;
+    const velocity = entity.velocity;
+
+    // Update the position based on velocity components and speed
+    position.x += velocity.direction.x * velocity.speed;
+    position.y += velocity.direction.y * velocity.speed;
 
     if (position.x < 0) {
       position.x = 0;
-      movement.direction.x *= -1;
+      velocity.direction.x *= -1;
     }
     if (position.x > this.mapWidth) {
       position.x = this.mapWidth;
-      movement.direction.x *= -1;
+      velocity.direction.x *= -1;
     }
 
     if (position.y < 0) {
       position.y = 0;
-      movement.direction.y *= -1;
+      velocity.direction.y *= -1;
     }
 
     if (position.y > this.mapHeight) {
       position.y = this.mapHeight;
-      movement.direction.y *= -1;
+      velocity.direction.y *= -1;
     }
   }
 }
