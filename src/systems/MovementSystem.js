@@ -10,12 +10,10 @@ class MovementSystem {
     }
   }
 
-
   // position = position + velocity
   update(entity) {
     const position = entity.position;
     const velocity = entity.velocity;
-
 
     // Update the position based on velocity components and speed
     position.x += velocity.direction.x * velocity.speed;
