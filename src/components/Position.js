@@ -12,6 +12,12 @@ class Position {
   getPosition() {
     return { x: this.x, y: this.y };
   }
+
+  getDistance(position) {
+    return Math.sqrt(
+      Math.pow(this.x - position.x, 2) + Math.pow(this.y - position.y, 2)
+    );
+  }
 }
 
 export default Position;
