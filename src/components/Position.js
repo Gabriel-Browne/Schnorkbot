@@ -1,4 +1,4 @@
-class PositionComponent {
+class Position {
   constructor(x, y) {
     this.x = x || 0;
     this.y = y || 0;
@@ -14,4 +14,4 @@ class PositionComponent {
   }
 }
 
-export default PositionComponent;
+export default Position;
