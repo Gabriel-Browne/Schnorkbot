@@ -10,8 +10,8 @@ class ChunkSystem {
   updateAll(entities) {
     for (const entity of entities) {
       this.updateEntityChunk(entity);
-      console.log(this.chunks);
-      console.log(this.entityChunkKey);
+      console.log('chunks', this.chunks);
+      console.log('entityChunkKey', this.entityChunkKey);
     }
   }
 
@@ -47,6 +47,7 @@ class ChunkSystem {
 
   getNeighbors(chunk) {
     const chunkKey = (chunk.row, chunk.col);
+    console.log('2', chunkKey);
     return [
       this.getNorthChunk(chunkKey),
       this.getNorthEastChunk(chunkKey),
@@ -61,6 +62,7 @@ class ChunkSystem {
 
   getNeighborhood(chunk) {
     // the neighborhood is just chunk's neighbors plus chunk
+    console.log('3 chunk', chunk);
     const neighborhood = this.getNeighbors(chunk);
     neighborhood.push(chunk);
     return neighborhood;
@@ -98,6 +100,7 @@ class ChunkSystem {
 
   getNorthChunkKey(chunkKey) {
     let chunkKeyTuple = [];
+    console.log(chunkKey);
     let chunkKeyStrTuple = chunkKey.split(',');
     for (const s of chunkKeyStrTuple) {
       chunkKeyTuple.push(Number(s));
@@ -142,6 +145,7 @@ class ChunkSystem {
   }
 
   getEntityChunk(entity) {
+    console.log('4', entity);
     const chunkKey = this.entityChunkKey[entity];
     return this.chunks[chunkKey];
   }

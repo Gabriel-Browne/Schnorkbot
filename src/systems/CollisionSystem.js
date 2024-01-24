@@ -13,7 +13,9 @@ class CollisionSystem {
       const entityHitbox = entity.hitbox;
 
       const chunk = this.chunkSystem.getEntityChunk(entity);
+
       const neighborhood = this.chunkSystem.getNeighborhood(chunk);
+
       for (const c in neighborhood) {
         for (const neighborEntity of c.entities) {
           const neighborHitbox = neighborEntity.hitbox;
